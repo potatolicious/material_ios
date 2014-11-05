@@ -14,5 +14,6 @@
 - (id)initWithMatFrame:(JJRect3)matFrame;
 
 @property (nonatomic, assign) JJRect3 matFrame;
+@property (nonatomic, strong) UIView *contentView;
 
 @end

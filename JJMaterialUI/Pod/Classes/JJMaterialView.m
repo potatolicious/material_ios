@@ -13,15 +13,38 @@
 
 @implementation JJMaterialView
 
+- (id)init {
+    self = [super init];
+    if (self) {
+        _matFrame = JJRect3Make(0, 0, 1, 0, 0, 1);
+        [self sharedInit];
+    }
+    return self;
+}
+
+- (id)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if (self) {
+        _matFrame = JJRect3Make(frame.origin.x, frame.origin.y, 1, frame.size.width, frame.size.height, 1);
+        [self sharedInit];
+    }
+    return self;
+}
+
 - (id)initWithMatFrame:(JJRect3)matFrame {
     self = [super initWithFrame:CGRectMake(matFrame.origin.x, matFrame.origin.y, matFrame.size.width, matFrame.size.height)];
     if (self) {
         _matFrame = matFrame;
-        self.layer.zPosition = _matFrame.origin.z;
-        [self needsShadowCheck];
-        [self needsZOrderCheck];
+        [self sharedInit];
     }
     return self;
+}
+
+- (void)sharedInit {
+    self.layer.zPosition = _matFrame.origin.z;
+    
+    self.contentView = [[UIView alloc] initWithFrame:self.bounds];
+    [self addSubview:self.contentView];
 }
 
 - (void)setFrame:(CGRect)frame {
@@ -31,6 +54,7 @@
     _matFrame.origin.y = frame.origin.y;
     _matFrame.size.width = frame.size.width;
     _matFrame.size.height = frame.size.height;
+    self.contentView.frame = CGRectMake(0, 0, frame.size.width, frame.size.height);
     [self didChangeValueForKey:@"matFrame"];
 }
 
@@ -50,6 +74,8 @@
     if (![self.superview isKindOfClass:[JJMaterialCanvas class]]) {
         @throw [NSException exceptionWithName:@"IllegalArgumentException" reason:@"JJMaterialView may only be inserted into JJMaterialCanvas objects" userInfo:nil];
     }
+    [self needsShadowCheck];
+    [self needsZOrderCheck];
 }
 
 - (JJMaterialCanvas *)parentCanvas {
