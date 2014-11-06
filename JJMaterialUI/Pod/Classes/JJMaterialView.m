@@ -138,7 +138,7 @@
     return (JJMaterialView *)self.superview;
 }
 
-- (void)needsZOrderCheckForChild:(JJMaterialView *)view; {
+- (void)needsZOrderCheckForChild:(JJMaterialView *)view {
     BOOL passesZOrderCheck = YES;
     NSUInteger idx = [self.subviews indexOfObject:view];
     if (idx > 1) {
@@ -169,6 +169,26 @@
     }
 }
 
+- (CGFloat)elevationOfChild:(JJMaterialView *)view {
+    // this looks for the highest view that overlaps in 2D with the candidate view, in order to the elevation of the candidate in relation to other views
+    UIView *whollyContainedView = nil;
+    CGFloat lowestElevation = MAXFLOAT;
+    for (JJMaterialView *container in self.subviews) {
+        if (container != view && [container isKindOfClass:[JJMaterialView class]]) {
+            CGFloat elevation = view.matFrame.origin.z - container.matFrame.origin.z;
+            if (JJRect3FullyOverlaps(container.matFrame, view.matFrame) && elevation < lowestElevation) {
+                whollyContainedView = container;
+                lowestElevation = elevation;
+            }
+        }
+    }
+    if (whollyContainedView) {
+        return lowestElevation;
+    } else {
+        return view.matFrame.origin.z - self.matFrame.origin.z;
+    }
+}
+
 #pragma mark - Shadowing
 
 - (void)updateShadowShape {
@@ -179,7 +199,7 @@
 }
 
 - (void)updateShadowExtent {
-    CGFloat altitude = self.matFrame.origin.z; // TODO real altitude here
+    CGFloat altitude = [self.parentMaterialView elevationOfChild:self];
     
     CGFloat baseKeyRadius = 1.0;
     CGFloat baseAmbientRadius = 0.25;

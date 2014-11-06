@@ -49,6 +49,10 @@ static inline JJRect3 JJRect3Make(CGFloat x, CGFloat y, CGFloat z, CGFloat width
     JJRect3 rect; rect.origin.x = x; rect.origin.y = y; rect.origin.z = z; rect.size.width = width; rect.size.height = height; rect.size.depth = depth; return rect;
 }
 
+static inline BOOL JJRect3FullyOverlaps(JJRect3 container, JJRect3 rect) {
+    return CGRectContainsRect(CGRectMake(container.origin.x, container.origin.y, container.size.width, container.size.height), CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height));
+}
+
 static inline NSString *NSStringFromJJRect3(JJRect3 rect) {
     return [NSString stringWithFormat:@"(%g %g %g; %g %g %g)", rect.origin.x, rect.origin.y, rect.origin.z, rect.size.width, rect.size.height, rect.size.depth];
 }
