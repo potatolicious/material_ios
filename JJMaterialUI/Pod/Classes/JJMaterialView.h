@@ -11,9 +11,14 @@
 
 @interface JJMaterialView : UIView
 
-- (id)initWithMatFrame:(JJRect3)matFrame;
-
 @property (nonatomic, assign) JJRect3 matFrame;
 @property (nonatomic, strong) UIView *contentView;
+
+- (id)initWithMatFrame:(JJRect3)matFrame;
+
+- (JJMaterialView *)parentMaterialView;
+
+- (void)needsZOrderCheck;
+- (void)needsShadowCheck;
 
 @end

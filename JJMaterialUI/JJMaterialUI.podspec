@@ -33,6 +33,6 @@ Pod::Spec.new do |s|
   }
 
   # s.public_header_files = 'Pod/Classes/**/*.h'
-  s.frameworks = 'QuartzCore'
+  s.frameworks = 'QuartzCore', 'UIKit'
   # s.dependency 'AFNetworking', '~> 2.3'
 end

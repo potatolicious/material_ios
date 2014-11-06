@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "JJMaterialView.h"
 
-@interface JJMaterialCanvas : UIView
+@interface JJMaterialCanvas : JJMaterialView
 
 @end

@@ -40,3 +40,7 @@ typedef struct JJRect3 JJRect3;
 static inline JJRect3 JJRect3Make(CGFloat x, CGFloat y, CGFloat z, CGFloat width, CGFloat height, CGFloat depth) {
     JJRect3 rect; rect.origin.x = x; rect.origin.y = y; rect.origin.z = z; rect.size.width = width; rect.size.height = height; rect.size.depth = depth; return rect;
 }
+
+static inline NSString *NSStringFromJJRect3(JJRect3 rect) {
+    return [NSString stringWithFormat:@"(%g %g %g; %g %g %g)", rect.origin.x, rect.origin.y, rect.origin.z, rect.size.width, rect.size.height, rect.size.depth];
+}

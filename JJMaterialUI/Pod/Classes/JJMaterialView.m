@@ -13,6 +13,8 @@
 
 @implementation JJMaterialView
 
+#pragma mark - Initializers
+
 - (id)init {
     self = [super init];
     if (self) {
@@ -47,6 +49,8 @@
     [self addSubview:self.contentView];
 }
 
+#pragma mark - Overrides from UIView
+
 - (void)setFrame:(CGRect)frame {
     [super setFrame:frame];
     [self willChangeValueForKey:@"matFrame"];
@@ -60,34 +64,85 @@
 
 - (void)setMatFrame:(JJRect3)matFrame {
     BOOL zChanged = matFrame.origin.z != _matFrame.origin.z;
+    if (zChanged)
+        [self needsZOrderCheck];
     [self willChangeValueForKey:@"matFrame"];
     _matFrame = matFrame;
     self.frame = CGRectMake(_matFrame.origin.x, _matFrame.origin.y, _matFrame.size.width, _matFrame.size.height);
     self.layer.zPosition = _matFrame.origin.z;
     [self didChangeValueForKey:@"matFrame"];
     [self needsShadowCheck];
-    if (zChanged)
-        [self needsZOrderCheck];
 }
 
 - (void)didMoveToSuperview {
-    if (![self.superview isKindOfClass:[JJMaterialCanvas class]]) {
-        @throw [NSException exceptionWithName:@"IllegalArgumentException" reason:@"JJMaterialView may only be inserted into JJMaterialCanvas objects" userInfo:nil];
+    // JJMaterialCanvas is immune to this check
+    if (![self isKindOfClass:[JJMaterialCanvas class]] && ![self.superview isKindOfClass:[JJMaterialView class]]) {
+        @throw [NSException exceptionWithName:@"IllegalArgumentException" reason:@"JJMaterialView may only be inserted into JJMaterialCanvas or other JJMaterialViews" userInfo:nil];
     }
     [self needsShadowCheck];
     [self needsZOrderCheck];
 }
 
-- (JJMaterialCanvas *)parentCanvas {
-    return (JJMaterialCanvas *)self.superview;
+- (void)removeFromSuperview {
+    [super removeFromSuperview];
+    [self.parentMaterialView didRemoveSubview:self];
+}
+
+- (NSString *)description {
+    return [NSString stringWithFormat:@"<%@: %p; matFrame = %@>", NSStringFromClass([self class]), self, NSStringFromJJRect3(self.matFrame)];
+}
+
+#pragma mark - Layering and ordering
+
+- (JJMaterialView *)parentMaterialView {
+    return (JJMaterialView *)self.superview;
+}
+
+- (void)needsZOrderCheck:(JJMaterialView *)view; {
+    BOOL passesZOrderCheck = YES;
+    NSUInteger idx = [self.subviews indexOfObject:view];
+    if (idx > 1) {
+        JJMaterialView *prevView = (JJMaterialView *)[self.subviews objectAtIndex:idx - 1];
+        passesZOrderCheck = prevView.matFrame.origin.z <= view.matFrame.origin.z;
+    }
+    if (passesZOrderCheck && idx < [self.subviews count] - 1) {
+        JJMaterialView *nextView = (JJMaterialView *)[self.subviews objectAtIndex:idx + 1];
+        passesZOrderCheck = nextView.matFrame.origin.z >= view.matFrame.origin.z;
+    }
+    if (!passesZOrderCheck) {
+        NSArray *sorted = [self.subviews sortedArrayUsingComparator:^NSComparisonResult(JJMaterialView *v1, JJMaterialView *v2) {
+            if (![v1 isKindOfClass:[JJMaterialView class]] && [v2 isKindOfClass:[JJMaterialView class]])
+                return NSOrderedAscending;
+            else if (![v2 isKindOfClass:[JJMaterialView class]] && [v1 isKindOfClass:[JJMaterialView class]])
+                return NSOrderedDescending;
+            if (v2.matFrame.origin.z > v1.matFrame.origin.z)
+                return NSOrderedAscending;
+            else if (v2.matFrame.origin.z < v1.matFrame.origin.z)
+                return NSOrderedDescending;
+            else
+                return NSOrderedSame;
+        }];
+        for (int i = 0 ; i < [sorted count] ; i++) {
+            JJMaterialView *view = sorted[i];
+            [self insertSubview:view atIndex:i];
+        }
+    }
 }
 
 - (void)needsZOrderCheck {
+    [self.parentMaterialView needsZOrderCheck:self];
+}
+
+- (void)needsShadowCheck:(JJMaterialView *)view {
     
 }
 
 - (void)needsShadowCheck {
-    
+    [self.parentMaterialView needsShadowCheck:self];
+}
+
+- (void)didRemoveSubview:(UIView *)view {
+    // TODO? Do we need this?
 }
 
 @end
