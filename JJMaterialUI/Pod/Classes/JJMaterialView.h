@@ -25,6 +25,7 @@ typedef NS_ENUM(int, JJMaterialViewOutlineType) {
 @property (nonatomic, strong) UIBezierPath *customOutlinePath;
 
 - (id)initWithMatFrame:(JJRect3)matFrame;
+- (id)initWithMatFrame:(JJRect3)matFrame outlineType:(JJMaterialViewOutlineType)outlineType;
 
 - (JJMaterialView *)parentMaterialView;
 

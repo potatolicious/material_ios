@@ -27,7 +27,7 @@
     
     self.subMatViews = [[NSMutableArray alloc] init];
     
-    JJMaterialView *view = [[JJMaterialView alloc] initWithMatFrame:JJRect3Make(140, 140, 3, 100, 100, 1)];
+    JJMaterialView *view = [[JJMaterialView alloc] initWithMatFrame:JJRect3Make(140, 140, 3, 100, 100, 1) outlineType:JJMaterialViewOutlineTypeEllipse];
     view.contentView.backgroundColor = [UIColor redColor];
     [self.canvas addSubview:view];
     [self.subMatViews addObject:view];
@@ -37,7 +37,8 @@
     [self.canvas addSubview:view];
     [self.subMatViews addObject:view];
     
-    view = [[JJMaterialView alloc] initWithMatFrame:JJRect3Make(10, 10, 1, 100, 100, 1)];
+    view = [[JJMaterialView alloc] initWithMatFrame:JJRect3Make(10, 10, 1, 100, 100, 1) outlineType:JJMaterialViewOutlineTypeRoundedRect];
+    view.outlineRadius = 6.0;
     view.contentView.backgroundColor = [UIColor blueColor];
     [self.canvas addSubview:view];
     [self.subMatViews addObject:view];
