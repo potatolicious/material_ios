@@ -20,6 +20,10 @@ static inline JJSize JJSizeMake(CGFloat width, CGFloat height, CGFloat depth) {
     JJSize size; size.width = width; size.height = height; size.depth = depth; return size;
 }
 
+static inline BOOL JJSizeEqual(JJSize s1, JJSize s2) {
+    return (s1.width == s2.width && s1.height == s2.height && s1.depth == s2.depth);
+}
+
 struct JJVec3 {
     CGFloat x;
     CGFloat y;
@@ -29,6 +33,10 @@ typedef struct JJVec3 JJVec3;
 
 static inline JJVec3 JJVec3Make(CGFloat x, CGFloat y, CGFloat z) {
     JJVec3 vec; vec.x = x; vec.y = y; vec.z = z; return vec;
+}
+
+static inline BOOL JJVec3Equal(JJVec3 v1, JJVec3 v2) {
+    return (v1.x == v2.x && v1.y == v2.y && v1.z == v2.z);
 }
 
 struct JJRect3 {
