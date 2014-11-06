@@ -27,6 +27,8 @@ typedef NS_ENUM(int, JJMaterialViewOutlineType) {
 - (id)initWithMatFrame:(JJRect3)matFrame;
 - (id)initWithMatFrame:(JJRect3)matFrame outlineType:(JJMaterialViewOutlineType)outlineType;
 
+- (void)setOutlineRadius:(CGFloat)outlineRadius animated:(BOOL)animated duration:(NSTimeInterval)duration delay:(NSTimeInterval)delay options:(UIViewAnimationOptions)options completion:(void (^)(BOOL finished))completion;
+
 - (JJMaterialView *)parentMaterialView;
 
 @end

@@ -27,7 +27,8 @@
     
     self.subMatViews = [[NSMutableArray alloc] init];
     
-    JJMaterialView *view = [[JJMaterialView alloc] initWithMatFrame:JJRect3Make(140, 140, 3, 100, 100, 1) outlineType:JJMaterialViewOutlineTypeEllipse];
+    JJMaterialView *view = [[JJMaterialView alloc] initWithMatFrame:JJRect3Make(140, 140, 3, 100, 100, 1) outlineType:JJMaterialViewOutlineTypeRoundedRect];
+    view.outlineRadius = 6.0;
     view.contentView.backgroundColor = [UIColor redColor];
     [self.canvas addSubview:view];
     [self.subMatViews addObject:view];
@@ -56,8 +57,21 @@
         f.origin.z = 5.0;
     else
         f.origin.z = 1.0;
+    CGFloat radius = (view.outlineRadius == 6.0) ? 50.0 : 6.0;
+    
+    JJMaterialView *view2 = self.subMatViews[1];
+    JJRect3 f2 = view2.matFrame;
+    if (f2.origin.z == 10.0)
+        f2.origin.z = 3.0;
+    else
+        f2.origin.z = 10.0;
+
     [UIView animateWithDuration:1.0 animations:^{
         view.matFrame = f;
+        view2.matFrame = f2;
+        [view setOutlineRadius:radius animated:YES duration:0.5 delay:0.0 options:0 completion:^(BOOL finished) {
+            // nop
+        }];
     } completion:^(BOOL finished) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             [self animate];

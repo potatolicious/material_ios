@@ -192,7 +192,40 @@
 #pragma mark - Shadowing
 
 - (void)updateShadowShape {
-    self.shadowPath = [self outlinePath];
+    [self updateShadowShapeAnimate:NO withDuration:0 delay:0 options:0 completion:nil];
+}
+
+- (void)updateShadowShapeAnimate:(BOOL)animated withDuration:(NSTimeInterval)duration delay:(NSTimeInterval)delay options:(UIViewAnimationOptions)options completion:(void (^)(BOOL finished))completion {
+    UIBezierPath *oldPath = self.shadowPath;
+    UIBezierPath *newPath = [self outlinePath];
+    self.shadowPath = newPath;
+    
+    if (animated) {
+        [CATransaction begin];
+        [CATransaction setCompletionBlock:^{
+            if (completion)
+                completion(YES);
+        }];
+        CABasicAnimation *anim = [CABasicAnimation animationWithKeyPath:@"path"];
+        anim.fromValue = (id)oldPath.CGPath;
+        anim.toValue = (id)newPath.CGPath;
+        anim.duration = duration;
+        anim.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
+        if (delay > 0.0)
+            anim.beginTime = CACurrentMediaTime() + delay;
+        
+        CABasicAnimation *anim2 = [CABasicAnimation animationWithKeyPath:@"shadowPath"];
+        anim2.fromValue = (id)oldPath.CGPath;
+        anim2.toValue = (id)newPath.CGPath;
+        anim2.duration = duration;
+        anim2.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseOut];
+        if (delay > 0.0)
+            anim2.beginTime = CACurrentMediaTime() + delay;
+        [self.contentClipLayer addAnimation:anim forKey:@"path"];
+        [self.keyShadowLayer addAnimation:anim2 forKey:@"shadowPath"];
+        [self.ambientShadowLayer addAnimation:anim2 forKey:@"shadowPath"];
+        [CATransaction commit];
+    }
     self.contentClipLayer.path = self.shadowPath.CGPath;
     self.keyShadowLayer.shadowPath = self.shadowPath.CGPath;
     self.ambientShadowLayer.shadowPath = self.shadowPath.CGPath;
@@ -228,6 +261,11 @@
 - (void)setOutlineRadius:(CGFloat)outlineRadius {
     _outlineRadius = outlineRadius;
     [self updateShadowShape];
+}
+
+- (void)setOutlineRadius:(CGFloat)outlineRadius animated:(BOOL)animated duration:(NSTimeInterval)duration delay:(NSTimeInterval)delay options:(UIViewAnimationOptions)options completion:(void (^)(BOOL finished))completion {
+    _outlineRadius = outlineRadius;
+    [self updateShadowShapeAnimate:animated withDuration:duration delay:delay options:options completion:completion];
 }
 
 - (void)setCustomOutlinePath:(UIBezierPath *)customOutlinePath {
