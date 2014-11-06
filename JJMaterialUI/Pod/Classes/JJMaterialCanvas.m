@@ -17,6 +17,7 @@
     self = [super init];
     if (self) {
         self.matFrame = JJRect3Make(0, 0, 0, 0, 0, 1);
+        [self canvasInit];
     }
     return self;
 }
@@ -25,6 +26,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.matFrame = JJRect3Make(frame.origin.x, frame.origin.y, 0, frame.size.width, frame.size.height, 1);
+        [self canvasInit];
     }
     return self;
 }
@@ -33,9 +35,13 @@
     matFrame.origin.z = 0.0;
     self = [super initWithMatFrame:matFrame];
     if (self) {
-        
+        [self canvasInit];
     }
     return self;
+}
+
+- (void)canvasInit {
+    self.contentView.backgroundColor = [UIColor whiteColor];
 }
 
 - (JJMaterialView *)parentMaterialView {

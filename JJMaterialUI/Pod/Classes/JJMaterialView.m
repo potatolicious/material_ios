@@ -182,9 +182,9 @@
     CGFloat altitude = self.matFrame.origin.z; // TODO real altitude here
     
     CGFloat baseKeyRadius = 1.0;
-    CGFloat baseAmbientRadius = 1.0;
+    CGFloat baseAmbientRadius = 0.25;
     CGFloat baseKeyOpacity = 0.45;
-    CGFloat baseAmbientOpacity = 0;
+    CGFloat baseAmbientOpacity = 0.2;
     
     CGSize keyOffset = [JJMaterialManager sharedManager].keyLightDirection;
     keyOffset.width *= altitude * 2.0;
